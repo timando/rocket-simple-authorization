@@ -10,7 +10,7 @@ mod macros;
 
 /// The trait for an authorizer.
 pub trait SimpleAuthorization {
-    fn has_authority<S: AsRef<str>>(key: S) -> bool;
+    fn has_authority<S: AsRef<str>>(key: Option<S>) -> bool;
 
-    fn create_auth<S: Into<String>>(key: S) -> Self;
+    fn create_auth<S: Into<String>>(key: Option<S>) -> Self;
 }

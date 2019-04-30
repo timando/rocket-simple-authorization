@@ -15,19 +15,18 @@ use rocket_simple_authorization::SimpleAuthorization;
 use chrono::prelude::*;
 
 #[allow(dead_code)]
-pub struct Auth {
-    key: String
-}
+pub struct Auth;
 
 impl SimpleAuthorization for Auth {
-    fn has_authority<S: AsRef<str>>(key: S) -> bool {
-        key.as_ref().eq("magickey")
+    fn has_authority<S: AsRef<str>>(key: Option<S>) -> bool {
+        match key {
+            Some(key) => key.as_ref().eq("magickey"),
+            None => false
+        }
     }
 
-    fn create_auth<S: Into<String>>(key: S) -> Auth {
-        Auth {
-            key: key.into()
-        }
+    fn create_auth<S: Into<String>>(_key: Option<S>) -> Auth {
+        Auth
     }
 }
 
