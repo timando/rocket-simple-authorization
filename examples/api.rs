@@ -14,7 +14,6 @@ use rocket_simple_authorization::SimpleAuthorization;
 
 use chrono::prelude::*;
 
-#[allow(dead_code)]
 pub struct Auth;
 
 impl SimpleAuthorization for Auth {
