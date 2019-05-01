@@ -12,5 +12,5 @@ mod macros;
 pub trait SimpleAuthorization {
     fn has_authority<S: AsRef<str>>(key: Option<S>) -> bool;
 
-    fn create_auth<S: Into<String>>(key: Option<S>) -> Self;
+    fn create_auth<S: AsRef<str>>(key: Option<S>) -> Self;
 }
