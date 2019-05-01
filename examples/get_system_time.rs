@@ -9,7 +9,7 @@ fn main() {
     request.headers = Some({
         let mut map = HashMap::with_capacity(1);
 
-        map.insert("Authorization", "magickey");
+        map.insert("Authorization", "WVdCXmcO07VdKX8GA");
 
         map
     });

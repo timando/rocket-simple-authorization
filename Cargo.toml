@@ -1,6 +1,6 @@
 [package]
 name = "rocket-simple-authorization"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["Magic Len <len@magiclen.org>"]
 repository = "https://github.com/magiclen/rocket-simple-authorization"
 homepage = "https://magiclen.org/rocket-simple-authorization"
@@ -17,3 +17,5 @@ travis-ci = { repository = "magiclen/rocket-simple-authorization", branch = "mas
 rocket = "0.4"
 chrono = "0.4"
 easy-http-request = "0.1"
+short-crypt = "1"
+lazy_static = "1"
