@@ -16,7 +16,7 @@ use chrono::prelude::*;
 
 pub struct Auth;
 
-impl SimpleAuthorization<String> for Auth {
+impl SimpleAuthorization for Auth {
     fn has_authority<S: AsRef<str>>(key: Option<S>) -> Option<Option<String>> {
         match key {
             Some(key) => if key.as_ref().eq("magickey") {
