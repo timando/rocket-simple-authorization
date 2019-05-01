@@ -17,14 +17,18 @@ use chrono::prelude::*;
 pub struct Auth;
 
 impl SimpleAuthorization for Auth {
-    fn has_authority<S: AsRef<str>>(key: Option<S>) -> bool {
+    fn has_authority<S: AsRef<str>>(key: Option<S>) -> Option<Option<String>> {
         match key {
-            Some(key) => key.as_ref().eq("magickey"),
-            None => false
+            Some(key) => if key.as_ref().eq("magickey") {
+                Some(None)
+            } else {
+                None
+            },
+            None => None
         }
     }
 
-    fn create_auth<S: AsRef<str>>(_key: Option<S>) -> Auth {
+    fn create_auth(_key: Option<String>) -> Auth {
         Auth
     }
 }

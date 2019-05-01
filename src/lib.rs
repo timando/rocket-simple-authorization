@@ -10,7 +10,9 @@ mod macros;
 
 /// The trait for an authorizer.
 pub trait SimpleAuthorization {
-    fn has_authority<S: AsRef<str>>(key: Option<S>) -> bool;
+    /// Check whether the key is valid or not. And a string can also be returned to create an auth instance.
+    fn has_authority<S: AsRef<str>>(key: Option<S>) -> Option<Option<String>>;
 
-    fn create_auth<S: AsRef<str>>(key: Option<S>) -> Self;
+    /// Create an auth instance.
+    fn create_auth(key: Option<String>) -> Self;
 }

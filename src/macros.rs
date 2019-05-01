@@ -10,10 +10,9 @@ macro_rules! authorizer {
 
                 let key = keys.into_iter().next();
 
-                if <$name as ::rocket_simple_authorization::SimpleAuthorization>::has_authority(key.clone()) {
-                    ::rocket::Outcome::Success(<$name as ::rocket_simple_authorization::SimpleAuthorization>::create_auth(key))
-                } else {
-                    ::rocket::Outcome::Forward(())
+                match <$name as ::rocket_simple_authorization::SimpleAuthorization>::has_authority(key) {
+                    Some(key) => ::rocket::Outcome::Success(<$name as ::rocket_simple_authorization::SimpleAuthorization>::create_auth(key)),
+                    None => ::rocket::Outcome::Forward(())
                 }
             }
         }
