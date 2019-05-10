@@ -58,7 +58,7 @@ impl<'a> SimpleAuthorization<'a, String> for Auth {
     }
 }
 
-// 3. Make the auth struct be a authorizer.
+// 3. Make the auth struct be an authorizer.
 authorizer!(Auth, String);
 
 // 4. Use the auth struct as a request guard.

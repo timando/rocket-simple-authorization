@@ -26,7 +26,7 @@ impl<'a> SimpleAuthorization<'a> for AuthKey<'a> {
     }
 }
 
-// 3. Make the auth struct be a authorizer.
+// 3. Make the auth struct be an authorizer.
 authorizer!(AuthKey<'a>);
 
 // 4. Use the auth struct as a request guard.

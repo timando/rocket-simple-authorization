@@ -20,6 +20,6 @@ fn main() {
             200 => println!("{}", String::from_utf8(response.body).unwrap()),
             _ => eprintln!("Unknown error. The status code is {}.", response.status_code),
         }
-        Err(_) => eprintln!("Please run api.rs first. Use `cargo run --example api`.")
+        Err(_) => eprintln!("Please run api.rs first. Use `cargo run --example get_system_time_api`.")
     }
 }
