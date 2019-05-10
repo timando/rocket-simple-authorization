@@ -32,9 +32,9 @@ pub struct Auth {
     auth_data: String
 }
 
-// 2. Implement `SimpleAuthorization<E>` for the auth struct. The default `<E>` is `<String>`.
-impl SimpleAuthorization for Auth {
-    fn has_authority<S: AsRef<str>>(key: Option<S>) -> Option<Option<String>> {
+// 2. Implement `SimpleAuthorization<E>` for the auth struct.
+impl<'a> SimpleAuthorization<'a, String> for Auth {
+    fn has_authority(key: Option<&'a str>) -> Option<Option<String>> {
         match key {
             Some(key) => {
                 match SC.decrypt_url_component(key) {
@@ -59,7 +59,7 @@ impl SimpleAuthorization for Auth {
 }
 
 // 3. Make the auth struct be a authorizer.
-authorizer!(Auth);
+authorizer!(Auth, String);
 
 // 4. Use the auth struct as a request guard.
 #[get("/time")]
@@ -81,5 +81,5 @@ fn system_time_401() -> Status {
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![system_time]).mount("/", routes![system_time_401]).launch();
+    rocket::ignite().mount("/", routes![system_time, system_time_401]).launch();
 }

@@ -1,10 +1,10 @@
 /// To let a struct which implements the `SimpleAuthorization<E>` trait become an authorizer. The default `<E>` is `<String>`.
 #[macro_export]
 macro_rules! authorizer {
-    ( $name:ident ) => {
-        authorizer!($name, String);
+    ( $name:ty ) => {
+        authorizer!($name, &'a str);
     };
-    ( $name:ident, $tpy:ty ) => {
+    ( $name:ty, $tpy:ty ) => {
         impl<'a, 'r> ::rocket::request::FromRequest<'a, 'r> for $name {
             type Error = ();
 
