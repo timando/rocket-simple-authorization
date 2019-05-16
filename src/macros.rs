@@ -1,4 +1,4 @@
-/// To let a struct which implements the `SimpleAuthorization<E>` trait become an authorizer. The default `<E>` is `<String>`.
+/// To let a struct which implements the `SimpleAuthorization<E>` trait become an authorizer. The default `<E>` is `<&'a str>`.
 #[macro_export]
 macro_rules! authorizer {
     ( $name:ty ) => {
