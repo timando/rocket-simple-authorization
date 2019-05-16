@@ -58,12 +58,12 @@ impl<'a> SimpleAuthorization<'a, String> for Auth {
     }
 }
 
-// 3. Make the auth struct be an authorizer.
-authorizer!(Auth, String);
+// 3. Make the auth struct be an authorizer(cacheable).
+authorizer!(ref Auth, String);
 
 // 4. Use the auth struct as a request guard.
 #[get("/time")]
-fn system_time(auth: Auth) -> Option<String> {
+fn system_time(auth: &Auth) -> Option<String> {
     // 5. Handle the auth struct.
     match auth.auth_data.as_str() {
         "magiclen.org" => (),
