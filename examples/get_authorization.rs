@@ -6,6 +6,8 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_simple_authorization;
 
+use rocket::request::Request;
+
 use rocket_simple_authorization::SimpleAuthorization;
 
 // 1. Implement any struct you want for authorization.
@@ -14,8 +16,8 @@ pub struct AuthKey<'a> {
 }
 
 // 2. Implement `SimpleAuthorization<E>` for the auth struct. The default `<E>` is `<&'a str>`.
-impl<'a> SimpleAuthorization<'a> for AuthKey<'a> {
-    fn has_authority(key: Option<&'a str>) -> Option<Option<&'a str>> {
+impl<'a, 'r> SimpleAuthorization<'a, 'r> for AuthKey<'a> {
+    fn has_authority(_request: &'a Request<'r>, key: Option<&'a str>) -> Option<Option<&'a str>> {
         Some(key)
     }
 

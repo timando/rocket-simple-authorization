@@ -6,12 +6,11 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_simple_authorization;
 
-#[macro_use]
-extern crate lazy_static;
-
 extern crate short_crypt;
 extern crate chrono;
 
+use rocket::State;
+use rocket::request::Request;
 use rocket::http::Status;
 
 use rocket_simple_authorization::SimpleAuthorization;
@@ -21,23 +20,19 @@ use chrono::prelude::*;
 
 const KEY: &'static str = "magickey";
 
-lazy_static! {
-    static ref SC: ShortCrypt = {
-        ShortCrypt::new(KEY)
-    };
-}
-
 // 1. Implement any struct you want for authorization.
 pub struct Auth {
     auth_data: String
 }
 
 // 2. Implement `SimpleAuthorization<E>` for the auth struct.
-impl<'a> SimpleAuthorization<'a, String> for Auth {
-    fn has_authority(key: Option<&'a str>) -> Option<Option<String>> {
+impl<'a, 'r> SimpleAuthorization<'a, 'r, String> for Auth {
+    fn has_authority(request: &'a Request<'r>, key: Option<&'a str>) -> Option<Option<String>> {
+        let sc = request.guard::<State<ShortCrypt>>().unwrap();
+
         match key {
             Some(key) => {
-                match SC.decrypt_url_component(key) {
+                match sc.decrypt_url_component(key) {
                     Ok(result) => {
                         match String::from_utf8(result) {
                             Ok(user_name) => Some(Some(user_name)),
@@ -81,5 +76,5 @@ fn system_time_401() -> Status {
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![system_time, system_time_401]).launch();
+    rocket::ignite().manage(ShortCrypt::new(KEY)).mount("/", routes![system_time, system_time_401]).launch();
 }

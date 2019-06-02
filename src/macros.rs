@@ -2,7 +2,7 @@
 #[macro_export]
 macro_rules! authorizer {
     ( $name:ty ) => {
-        authorizer!($name, &'a str);
+        authorizer!($name, &str);
     };
     ( $name:ty, $typ:ty ) => {
         impl<'a, 'r> ::rocket::request::FromRequest<'a, 'r> for $name {
@@ -13,7 +13,7 @@ macro_rules! authorizer {
 
                 let key = keys.into_iter().next();
 
-                match <$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::has_authority(key) {
+                match <$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::has_authority(request, key) {
                     Some(key) => ::rocket::Outcome::Success(<$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::create_auth(key)),
                     None => ::rocket::Outcome::Forward(())
                 }
@@ -32,7 +32,7 @@ macro_rules! authorizer {
 
                     let key = keys.into_iter().next();
 
-                    match <$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::has_authority(key) {
+                    match <$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::has_authority(request, key) {
                         Some(key) => Some(<$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::create_auth(key)),
                         None => None
                     }
