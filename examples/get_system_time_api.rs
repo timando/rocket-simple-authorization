@@ -25,6 +25,12 @@ pub struct Auth {
     auth_data: String
 }
 
+impl Auth {
+    pub fn as_str(&self) -> &str {
+        self.auth_data.as_str()
+    }
+}
+
 // 2. Implement `SimpleAuthorization<E>` for the auth struct.
 impl<'a, 'r> SimpleAuthorization<'a, 'r, String> for Auth {
     fn has_authority(request: &'a Request<'r>, key: Option<&'a str>) -> Option<Option<String>> {
@@ -60,7 +66,7 @@ authorizer!(ref Auth, String);
 #[get("/time")]
 fn system_time(auth: &Auth) -> Option<String> {
     // 5. Handle the auth struct.
-    match auth.auth_data.as_str() {
+    match auth.as_str() {
         "magiclen.org" => (),
         _ => return None
     }

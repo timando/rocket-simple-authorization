@@ -15,6 +15,12 @@ pub struct AuthKey<'a> {
     authorization: Option<&'a str>
 }
 
+impl<'a> AuthKey<'a> {
+    pub fn as_str(&self) -> Option<&'a str> {
+        self.authorization.clone()
+    }
+}
+
 // 2. Implement `SimpleAuthorization<E>` for the auth struct. The default `<E>` is `<&'a str>`.
 impl<'a, 'r> SimpleAuthorization<'a, 'r> for AuthKey<'a> {
     fn has_authority(_request: &'a Request<'r>, key: Option<&'a str>) -> Option<Option<&'a str>> {
@@ -35,7 +41,7 @@ authorizer!(AuthKey<'a>);
 #[get("/")]
 fn authorization(auth_key: AuthKey) -> &str {
     // 5. Handle the auth struct.
-    auth_key.authorization.unwrap_or("")
+    auth_key.as_str().unwrap_or("")
 }
 
 fn main() {
