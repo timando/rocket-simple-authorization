@@ -21,16 +21,12 @@ impl<'a> AuthKey<'a> {
     }
 }
 
-// 2. Implement `SimpleAuthorization<E>` for the auth struct. The default `<E>` is `<&'a str>`.
+// 2. Implement `SimpleAuthorization` for the auth struct.
 impl<'a, 'r> SimpleAuthorization<'a, 'r> for AuthKey<'a> {
-    fn has_authority(_request: &'a Request<'r>, key: Option<&'a str>) -> Option<Option<&'a str>> {
-        Some(key)
-    }
-
-    fn create_auth(authorization: Option<&'a str>) -> AuthKey {
-        AuthKey {
+    fn authorizing(_request: &'a Request<'r>, authorization: Option<&'a str>) -> Option<Self> {
+        Some(AuthKey {
             authorization
-        }
+        })
     }
 }
 

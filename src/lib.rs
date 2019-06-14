@@ -13,10 +13,7 @@ extern crate rocket;
 use rocket::request::Request;
 
 /// The trait for an authorizer.
-pub trait SimpleAuthorization<'a, 'r, E = &'a str> {
-    /// Check whether the key is valid or not. And a generic type can also be returned to help create an auth instance.
-    fn has_authority(request: &'a Request<'r>, key: Option<&'a str>) -> Option<Option<E>>;
-
-    /// Create an auth instance.
-    fn create_auth(key: Option<E>) -> Self;
+pub trait SimpleAuthorization<'a, 'r>: where Self: Sized {
+    /// Check whether the value in the `Authorization` header is valid or not. If it is valid, create a new instance of `Self`.
+    fn authorizing(request: &'a Request<'r>, authorization: Option<&'a str>) -> Option<Self>;
 }

@@ -31,17 +31,19 @@ impl Auth {
     }
 }
 
-// 2. Implement `SimpleAuthorization<E>` for the auth struct.
-impl<'a, 'r> SimpleAuthorization<'a, 'r, String> for Auth {
-    fn has_authority(request: &'a Request<'r>, key: Option<&'a str>) -> Option<Option<String>> {
+// 2. Implement `SimpleAuthorization` for the auth struct.
+impl<'a, 'r> SimpleAuthorization<'a, 'r> for Auth {
+    fn authorizing(request: &'a Request<'r>, authorization: Option<&'a str>) -> Option<Self> {
         let sc = request.guard::<State<ShortCrypt>>().unwrap();
 
-        match key {
-            Some(key) => {
-                match sc.decrypt_url_component(key) {
+        match authorization {
+            Some(authorization) => {
+                match sc.decrypt_url_component(authorization) {
                     Ok(result) => {
                         match String::from_utf8(result) {
-                            Ok(user_name) => Some(Some(user_name)),
+                            Ok(user_name) => Some( Auth {
+                                auth_data: user_name
+                            }),
                             Err(_) => None
                         }
                     }
@@ -51,16 +53,10 @@ impl<'a, 'r> SimpleAuthorization<'a, 'r, String> for Auth {
             None => None
         }
     }
-
-    fn create_auth(user_name: Option<String>) -> Auth {
-        Auth {
-            auth_data: user_name.unwrap()
-        }
-    }
 }
 
 // 3. Make the auth struct be an authorizer(cacheable).
-authorizer!(ref Auth, String);
+authorizer!(ref Auth);
 
 // 4. Use the auth struct as a request guard.
 #[get("/time")]

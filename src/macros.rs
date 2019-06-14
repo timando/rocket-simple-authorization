@@ -1,10 +1,7 @@
-/// To let a struct which implements the `SimpleAuthorization<E>` trait become an authorizer. The default `<E>` is `<&'a str>`.
+/// To let a struct which implements the `SimpleAuthorization` trait become an authorizer.
 #[macro_export]
 macro_rules! authorizer {
     ( $name:ty ) => {
-        authorizer!($name, &str);
-    };
-    ( $name:ty, $typ:ty ) => {
         impl<'a, 'r> ::rocket::request::FromRequest<'a, 'r> for $name {
             type Error = ();
 
@@ -13,15 +10,15 @@ macro_rules! authorizer {
 
                 let key = keys.into_iter().next();
 
-                match <$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::has_authority(request, key) {
-                    Some(key) => ::rocket::Outcome::Success(<$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::create_auth(key)),
+                match <$name as ::rocket_simple_authorization::SimpleAuthorization>::authorizing(request, key) {
+                    Some(ins) => ::rocket::Outcome::Success(ins),
                     None => ::rocket::Outcome::Forward(())
                 }
             }
         }
     };
-    ( ref $name:ty, $typ:ty ) => {
-        authorizer!($name, $typ);
+    ( ref $name:ty ) => {
+        authorizer!($name);
     
         impl<'a, 'r> ::rocket::request::FromRequest<'a, 'r> for &'a $name {
             type Error = ();
@@ -32,14 +29,14 @@ macro_rules! authorizer {
 
                     let key = keys.into_iter().next();
 
-                    match <$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::has_authority(request, key) {
-                        Some(key) => Some(<$name as ::rocket_simple_authorization::SimpleAuthorization<$typ>>::create_auth(key)),
+                    match <$name as ::rocket_simple_authorization::SimpleAuthorization>::authorizing(request, key) {
+                        Some(ins) => Some(ins),
                         None => None
                     }
                 });
 
                 match cache.as_ref() {
-                    Some(client_addr) => ::rocket::Outcome::Success(client_addr),
+                    Some(cache) => ::rocket::Outcome::Success(cache),
                     None => ::rocket::Outcome::Forward(())
                 }
             }
