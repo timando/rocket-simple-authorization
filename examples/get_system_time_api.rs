@@ -41,7 +41,7 @@ impl<'a, 'r> SimpleAuthorization<'a, 'r> for Auth {
                 match sc.decrypt_url_component(authorization) {
                     Ok(result) => {
                         match String::from_utf8(result) {
-                            Ok(user_name) => Some( Auth {
+                            Ok(user_name) => Some(Auth {
                                 auth_data: user_name
                             }),
                             Err(_) => None
