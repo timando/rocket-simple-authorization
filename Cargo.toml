@@ -1,6 +1,6 @@
 [package]
 name = "rocket-simple-authorization"
-version = "0.9.0"
+version = "0.9.1"
 authors = ["Magic Len <len@magiclen.org>"]
 repository = "https://github.com/magiclen/rocket-simple-authorization"
 homepage = "https://magiclen.org/rocket-simple-authorization"

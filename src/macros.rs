@@ -6,9 +6,7 @@ macro_rules! authorizer {
             type Error = ();
 
             fn from_request(request: &'a ::rocket::request::Request<'r>) -> ::rocket::request::Outcome<Self, Self::Error> {
-                let keys: Vec<&str> = request.headers().get("authorization").collect();
-
-                let key = keys.into_iter().next();
+                let key: Option<&str> = request.headers().get("authorization").next();
 
                 match <$name as ::rocket_simple_authorization::SimpleAuthorization>::authorizing(request, key) {
                     Some(ins) => ::rocket::Outcome::Success(ins),
@@ -25,9 +23,7 @@ macro_rules! authorizer {
 
             fn from_request(request: &'a ::rocket::request::Request<'r>) -> ::rocket::request::Outcome<Self, Self::Error> {
                 let cache = request.local_cache(|| {
-                    let keys: Vec<&str> = request.headers().get("authorization").collect();
-
-                    let key = keys.into_iter().next();
+                    let key: Option<&str> = request.headers().get("authorization").next();
 
                     match <$name as ::rocket_simple_authorization::SimpleAuthorization>::authorizing(request, key) {
                         Some(ins) => Some(ins),
