@@ -1,24 +1,18 @@
-extern crate easy_http_request;
+extern crate reqwest;
 
-use easy_http_request::StaticHttpRequest;
-use std::collections::HashMap;
+use reqwest::Client;
 
 fn main() {
-    let mut request = StaticHttpRequest::get_from_url_str("http://127.0.0.1:8000/time").unwrap();
+    let response = Client::new().get("http://127.0.0.1:8000/time").header("Authorization", "WVdCXmcO07VdKX8GA").send();
 
-    request.headers = Some({
-        let mut map = HashMap::with_capacity(1);
-
-        map.insert("Authorization", "WVdCXmcO07VdKX8GA");
-
-        map
-    });
-
-    match request.send() {
-        Ok(response) => match response.status_code {
-            401 => eprintln!("The auth key is wrong!"),
-            200 => println!("{}", String::from_utf8(response.body).unwrap()),
-            _ => eprintln!("Unknown error. The status code is {}.", response.status_code),
+    match response {
+        Ok(mut r) => {
+            let status_code = r.status().as_u16();
+            match status_code {
+                401 => eprintln!("The auth key is wrong!"),
+                200 => println!("{}", r.text().unwrap()),
+                _ => eprintln!("Unknown error. The status code is {}.", status_code),
+            }
         }
         Err(_) => eprintln!("Please run api.rs first. Use `cargo run --example get_system_time_api`.")
     }
