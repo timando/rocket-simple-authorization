@@ -6,23 +6,23 @@ extern crate rocket;
 #[macro_use]
 extern crate rocket_simple_authorization;
 
-extern crate short_crypt;
 extern crate chrono;
+extern crate short_crypt;
 
-use rocket::State;
-use rocket::request::Request;
 use rocket::http::Status;
+use rocket::request::Request;
+use rocket::State;
 
 use rocket_simple_authorization::SimpleAuthorization;
 
-use short_crypt::ShortCrypt;
 use chrono::prelude::*;
+use short_crypt::ShortCrypt;
 
 const KEY: &'static str = "magickey";
 
 // 1. Implement any struct you want for authorization.
 pub struct Auth {
-    auth_data: String
+    auth_data: String,
 }
 
 impl Auth {
@@ -41,16 +41,18 @@ impl<'a, 'r> SimpleAuthorization<'a, 'r> for Auth {
                 match sc.decrypt_url_component(authorization) {
                     Ok(result) => {
                         match String::from_utf8(result) {
-                            Ok(user_name) => Some(Auth {
-                                auth_data: user_name
-                            }),
-                            Err(_) => None
+                            Ok(user_name) => {
+                                Some(Auth {
+                                    auth_data: user_name,
+                                })
+                            }
+                            Err(_) => None,
                         }
                     }
-                    Err(_) => None
+                    Err(_) => None,
                 }
             }
-            None => None
+            None => None,
         }
     }
 }
@@ -64,7 +66,7 @@ fn system_time(auth: &Auth) -> Option<String> {
     // 5. Handle the auth struct.
     match auth.as_str() {
         "magiclen.org" => (),
-        _ => return None
+        _ => return None,
     }
 
     let utc: DateTime<Utc> = Utc::now();
@@ -78,5 +80,8 @@ fn system_time_401() -> Status {
 }
 
 fn main() {
-    rocket::ignite().manage(ShortCrypt::new(KEY)).mount("/", routes![system_time, system_time_401]).launch();
+    rocket::ignite()
+        .manage(ShortCrypt::new(KEY))
+        .mount("/", routes![system_time, system_time_401])
+        .launch();
 }

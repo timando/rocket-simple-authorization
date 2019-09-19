@@ -17,7 +17,7 @@ macro_rules! authorizer {
     };
     ( ref $name:ty ) => {
         authorizer!($name);
-    
+
         impl<'a, 'r> ::rocket::request::FromRequest<'a, 'r> for &'a $name {
             type Error = ();
 

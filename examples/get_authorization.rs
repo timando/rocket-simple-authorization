@@ -12,7 +12,7 @@ use rocket_simple_authorization::SimpleAuthorization;
 
 // 1. Implement any struct you want for authorization.
 pub struct AuthKey<'a> {
-    authorization: Option<&'a str>
+    authorization: Option<&'a str>,
 }
 
 impl<'a> AuthKey<'a> {
@@ -25,7 +25,7 @@ impl<'a> AuthKey<'a> {
 impl<'a, 'r> SimpleAuthorization<'a, 'r> for AuthKey<'a> {
     fn authorizing(_request: &'a Request<'r>, authorization: Option<&'a str>) -> Option<Self> {
         Some(AuthKey {
-            authorization
+            authorization,
         })
     }
 }
