@@ -1,6 +1,6 @@
 extern crate reqwest;
 
-use reqwest::Client;
+use reqwest::blocking::Client;
 
 fn main() {
     let response = Client::new()
@@ -9,7 +9,7 @@ fn main() {
         .send();
 
     match response {
-        Ok(mut r) => {
+        Ok(r) => {
             let status_code = r.status().as_u16();
             match status_code {
                 401 => eprintln!("The auth key is wrong!"),
