@@ -1,19 +1,20 @@
 [package]
 name = "rocket-simple-authorization"
-version = "0.9.6"
+version = "0.9.7"
 authors = ["Magic Len <len@magiclen.org>"]
 edition = "2018"
 repository = "https://github.com/magiclen/rocket-simple-authorization"
 homepage = "https://magiclen.org/rocket-simple-authorization"
 keywords = ["rocket", "server", "web", "authorization", "authorize"]
 categories = ["parser-implementations", "web-programming"]
-description= "This crate provides a request guard builder used for authorization."
+description = "This crate provides a request guard builder used for authorization."
 readme = "README.md"
 license = "MIT"
-include = ["src/**/*", "Cargo.toml"]
+include = ["src/**/*", "Cargo.toml", "README.md", "LICENSE"]
 
-[badges]
-travis-ci = { repository = "magiclen/rocket-simple-authorization", branch = "master" }
+[badges.travis-ci]
+repository = "magiclen/rocket-simple-authorization"
+branch = "master"
 
 [dependencies]
 rocket = "0.4.2"
