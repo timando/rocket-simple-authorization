@@ -8,7 +8,8 @@ See `examples`.
 
 mod macros;
 
-extern crate rocket;
+#[doc(hidden)]
+pub extern crate rocket;
 
 use rocket::request::Request;
 
