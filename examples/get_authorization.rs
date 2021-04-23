@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use]
 extern crate rocket;
 
@@ -22,8 +20,12 @@ impl<'a> AuthKey<'a> {
 }
 
 // 2. Implement `SimpleAuthorization` for the auth struct.
-impl<'a, 'r> SimpleAuthorization<'a, 'r> for AuthKey<'a> {
-    fn authorizing(_request: &'a Request<'r>, authorization: Option<&'a str>) -> Option<Self> {
+#[async_trait]
+impl<'r> SimpleAuthorization<'r> for AuthKey<'r> {
+    async fn authorizing(
+        _request: &'r Request<'_>,
+        authorization: Option<&'r str>,
+    ) -> Option<Self> {
         Some(AuthKey {
             authorization,
         })
@@ -31,7 +33,7 @@ impl<'a, 'r> SimpleAuthorization<'a, 'r> for AuthKey<'a> {
 }
 
 // 3. Make the auth struct be an authorizer.
-authorizer!(AuthKey<'a>);
+authorizer!(AuthKey<'r>);
 
 // 4. Use the auth struct as a request guard.
 #[get("/")]
@@ -40,6 +42,7 @@ fn authorization(auth_key: AuthKey) -> &str {
     auth_key.as_str().unwrap_or("")
 }
 
-fn main() {
-    rocket::ignite().mount("/", routes![authorization]).launch();
+#[launch]
+fn rocket() -> _ {
+    rocket::build().mount("/", routes![authorization])
 }

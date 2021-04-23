@@ -1,7 +1,7 @@
 `simple-authorization` Request Guard for Rocket Framework
 ====================
 
-[![Build Status](https://travis-ci.org/magiclen/rocket-simple-authorization.svg?branch=master)](https://travis-ci.org/magiclen/rocket-simple-authorization)
+[![CI](https://github.com/magiclen/rocket-simple-authorization/actions/workflows/ci.yml/badge.svg)](https://github.com/magiclen/rocket-simple-authorization/actions/workflows/ci.yml)
 
 This crate provides a request guard builder used for authorization.
 

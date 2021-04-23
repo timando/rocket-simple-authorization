@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use]
 extern crate rocket;
 
@@ -32,9 +30,10 @@ impl Auth {
 }
 
 // 2. Implement `SimpleAuthorization` for the auth struct.
-impl<'a, 'r> SimpleAuthorization<'a, 'r> for Auth {
-    fn authorizing(request: &'a Request<'r>, authorization: Option<&'a str>) -> Option<Self> {
-        let sc = request.guard::<State<ShortCrypt>>().unwrap();
+#[async_trait]
+impl<'r> SimpleAuthorization<'r> for Auth {
+    async fn authorizing(request: &'r Request<'_>, authorization: Option<&'r str>) -> Option<Self> {
+        let sc = request.guard::<State<ShortCrypt>>().await.unwrap();
 
         match authorization {
             Some(authorization) => {
@@ -79,9 +78,7 @@ fn system_time_401() -> Status {
     Status::Unauthorized
 }
 
-fn main() {
-    rocket::ignite()
-        .manage(ShortCrypt::new(KEY))
-        .mount("/", routes![system_time, system_time_401])
-        .launch();
+#[launch]
+fn rocket() -> _ {
+    rocket::build().manage(ShortCrypt::new(KEY)).mount("/", routes![system_time, system_time_401])
 }

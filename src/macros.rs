@@ -2,17 +2,18 @@
 #[macro_export]
 macro_rules! authorizer {
     ($name:ty) => {
-        impl<'a, 'r> $crate::rocket::request::FromRequest<'a, 'r> for $name {
+        #[$crate::rocket::async_trait]
+        impl<'r> $crate::rocket::request::FromRequest<'r> for $name {
             type Error = ();
 
-            fn from_request(
-                request: &'a $crate::rocket::request::Request<'r>,
+            async fn from_request(
+                request: &'r $crate::rocket::request::Request<'_>,
             ) -> $crate::rocket::request::Outcome<Self, Self::Error> {
                 let key: Option<&str> = request.headers().get("authorization").next();
 
-                match <$name as $crate::SimpleAuthorization>::authorizing(request, key) {
-                    Some(ins) => $crate::rocket::Outcome::Success(ins),
-                    None => $crate::rocket::Outcome::Forward(()),
+                match <$name as $crate::SimpleAuthorization>::authorizing(request, key).await {
+                    Some(ins) => $crate::rocket::outcome::Outcome::Success(ins),
+                    None => $crate::rocket::outcome::Outcome::Forward(()),
                 }
             }
         }
@@ -20,24 +21,27 @@ macro_rules! authorizer {
     (ref $name:ty) => {
         $crate::authorizer!($name);
 
-        impl<'a, 'r> $crate::rocket::request::FromRequest<'a, 'r> for &'a $name {
+        #[$crate::rocket::async_trait]
+        impl<'r> $crate::rocket::request::FromRequest<'r> for &'r $name {
             type Error = ();
 
-            fn from_request(
-                request: &'a $crate::rocket::request::Request<'r>,
+            async fn from_request(
+                request: &'r $crate::rocket::request::Request<'_>,
             ) -> $crate::rocket::request::Outcome<Self, Self::Error> {
-                let cache = request.local_cache(|| {
+                async fn f(request: &$crate::rocket::request::Request<'_>) -> Option<$name> {
                     let key: Option<&str> = request.headers().get("authorization").next();
 
-                    match <$name as $crate::SimpleAuthorization>::authorizing(request, key) {
+                    match <$name as SimpleAuthorization>::authorizing(request, key).await {
                         Some(ins) => Some(ins),
                         None => None,
                     }
-                });
+                }
+
+                let cache = request.local_cache_async(f(request)).await;
 
                 match cache.as_ref() {
-                    Some(cache) => $crate::rocket::Outcome::Success(cache),
-                    None => $crate::rocket::Outcome::Forward(()),
+                    Some(cache) => $crate::rocket::outcome::Outcome::Success(cache),
+                    None => $crate::rocket::outcome::Outcome::Forward(()),
                 }
             }
         }
