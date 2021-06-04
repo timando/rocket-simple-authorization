@@ -31,7 +31,7 @@ macro_rules! authorizer {
                 async fn f(request: &$crate::rocket::request::Request<'_>) -> Option<$name> {
                     let key: Option<&str> = request.headers().get("authorization").next();
 
-                    match <$name as SimpleAuthorization>::authorizing(request, key).await {
+                    match <$name as $crate::SimpleAuthorization>::authorizing(request, key).await {
                         Some(ins) => Some(ins),
                         None => None,
                     }
