@@ -9,7 +9,6 @@ extern crate short_crypt;
 
 use rocket::http::Status;
 use rocket::request::Request;
-use rocket::State;
 
 use rocket_simple_authorization::SimpleAuthorization;
 
@@ -33,7 +32,7 @@ impl Auth {
 #[async_trait]
 impl<'r> SimpleAuthorization<'r> for Auth {
     async fn authorizing(request: &'r Request<'_>, authorization: Option<&'r str>) -> Option<Self> {
-        let sc = request.guard::<State<ShortCrypt>>().await.unwrap();
+        let sc = request.rocket().state::<ShortCrypt>().unwrap();
 
         match authorization {
             Some(authorization) => {
